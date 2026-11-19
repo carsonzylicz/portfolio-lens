@@ -1,5 +1,7 @@
 # Portfolio Lens — public
 
+Live at **https://carsonzylicz.com/** on a Cloudflare Worker.
+
 A static, light-mode view of a personal portfolio.
 
 - Per-position actual return charts

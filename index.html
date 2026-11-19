@@ -53,7 +53,14 @@
     <section class="panel" id="performance">
       <div class="section-head">
         <h2>Actual vs SPY and QQQ</h2>
-        <p>Holdings-weighted actual returns. The two eras are separate: Schwab was the earlier account; Robinhood is the current account.</p>
+        <p>Holdings-weighted actual returns. The all-history view links the two accounts at Jan 2024; the era cards below show each separately.</p>
+      </div>
+      <div class="era" id="era-all">
+        <div class="era-head"><h3>All history — Schwab + Robinhood</h3><span id="all-window"></span></div>
+        <div class="summary" id="all-summary"></div>
+        <div class="legend" id="all-legend"></div>
+        <div class="chart" id="all-chart"></div>
+        <p class="note">Linked at Jan 2024 when the account changed. The Schwab segment is the earlier account; the Robinhood segment is the current book.</p>
       </div>
       <div class="era" id="era-robinhood">
         <div class="era-head"><h3>Robinhood era</h3><span id="rh-window"></span></div>
@@ -83,16 +90,16 @@
 
     <section class="panel" id="trades">
       <div class="section-head">
-        <h2>Best 10 buys and sells</h2>
-        <p>By relative size and by percent. The size lists are ranked by dollar size internally; the bars are relative and no dollar amounts are shown.</p>
+        <h2>Best and worst realized performers</h2>
+        <p>One row per ticker, built from every realized sale in the Schwab and Robinhood records. Nominal lists rank by total realized gain or loss (relative bars, no dollar amounts); percent lists rank by realized return. The worst lists show the largest losses.</p>
       </div>
       <div class="trade-grid">
-        <div class="trade-card"><h3>Best buys — by size</h3><div class="table-wrap"><table id="buys-size"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Relative size</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best buys — by percent</h3><div class="table-wrap"><table id="buys-pct"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best sells — by size</h3><div class="table-wrap"><table id="sells-size"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Relative size</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best sells — by percent</h3><div class="table-wrap"><table id="sells-pct"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best realized — by nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best realized — by percent</h3><div class="table-wrap"><table id="best-pct"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst realized — by nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst realized — by percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
-      <p class="note">Best buys by percent use the exit price for closed lots and the last available mark for open lots. Best sells by percent use realized FIFO return. Size is ranked on the full trade set.</p>
+      <p class="note">Nominal is the total realized gain/loss per ticker, ranked internally; the bar is relative and no dollar amount is shown. Percent is total realized gain divided by total cost. All sells through Nov 18, 2026.</p>
     </section>
   </main>
 

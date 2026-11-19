@@ -169,3 +169,4 @@ tbody tr:hover td { background: #faf8f2; }
   .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bar-cell { width: 80px; }
 }
+.bar-fill.loss { background: var(--red); }

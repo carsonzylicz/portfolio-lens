@@ -86,7 +86,8 @@
     }
     const years = [];
     data.dates.forEach((d, i) => { const yr = d.slice(0, 4); if (!years.length || years.at(-1).yr !== yr) years.push({ yr, i }); });
-    for (const yy of years) {
+    const shownYears = years.filter((yy, idx) => idx > 0 || Number(data.dates[0].slice(5, 7)) < 10);
+    for (const yy of shownYears) {
       const xx = x(yy.i);
       s.appendChild(el('line', { x1: xx, x2: xx, y1: pt, y2: H - pb, stroke: '#f0ede5', 'stroke-width': 0.8 }));
       s.appendChild(el('text', { x: xx, y: H - 10, fill: '#8a8f98', 'font-size': 9, 'font-family': 'ui-monospace, monospace', 'text-anchor': 'middle' }, yy.yr));
@@ -118,7 +119,8 @@
     }
     const years = [];
     data.dates.forEach((d, i) => { const yr = d.slice(0, 4); if (!years.length || years.at(-1).yr !== yr) years.push({ yr, i }); });
-    for (const yy of years) {
+    const shownYears = years.filter((yy, idx) => idx > 0 || Number(data.dates[0].slice(5, 7)) < 10);
+    for (const yy of shownYears) {
       s.appendChild(el('text', { x: x(yy.i), y: H - 10, fill: '#8a8f98', 'font-size': 9, 'font-family': 'ui-monospace, monospace', 'text-anchor': 'middle' }, yy.yr));
     }
     const base = data.dates.map(() => 0);
@@ -212,6 +214,18 @@
   }
 
   function renderPerformance() {
+    const all = D.combined;
+    document.querySelector('#all-window').textContent = `${fmtDate(all.start)} → ${fmtDate(all.end)}`;
+    cards(document.querySelector('#all-summary'), [
+      { label: 'Portfolio', value: fmtPct(all.summary.portfolio), cls: all.summary.portfolio < 0 ? 'neg' : 'pos' },
+      { label: 'SPY', value: fmtPct(all.summary.spy), cls: all.summary.spy < 0 ? 'neg' : 'pos' },
+      { label: 'QQQ', value: fmtPct(all.summary.qqq), cls: all.summary.qqq < 0 ? 'neg' : 'pos' },
+      { label: 'Excess vs SPY', value: fmtPP(all.summary.excess), cls: all.summary.excess < 0 ? 'neg' : 'pos' },
+      { label: 'Excess vs QQQ', value: fmtPP(all.summary.excessQqq), cls: all.summary.excessQqq < 0 ? 'neg' : 'pos' },
+    ]);
+    document.querySelector('#all-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
+    document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ'));
+
     const rh = D.perf;
     document.querySelector('#rh-window').textContent = `${fmtDate(rh.start)} → ${fmtDate(rh.end)}`;
     cards(document.querySelector('#rh-summary'), [
@@ -250,21 +264,21 @@
     tbody.innerHTML = r.top.map((p) => `<tr><td>${p.ticker}</td><td>${fmtDate(p.date)}</td><td class="${p.missedPct < 0 ? 'neg' : 'pos'}">${fmtPct(p.missedPct)}</td><td class="${p.replacedPct < 0 ? 'neg' : 'pos'}">${fmtPct(p.replacedPct)}</td><td class="${p.tradeoffPct < 0 ? 'neg' : 'pos'}">${fmtPP(p.tradeoffPct)}</td></tr>`).join('');
   }
 
-  function bestTable(id, rows, mode) {
+  function realizedTable(id, rows, nominal) {
     const tbody = document.querySelector(`${id} tbody`);
     tbody.innerHTML = rows.map((r, i) => {
-      const bar = mode === 'size'
-        ? `<td class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${Math.max(2, (r.size || 0) * 100)}%"></div></div></td>`
-        : `<td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>`;
-      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${fmtDate(r.date)}</td><td>${fmtShares(r.shares)}</td>${bar}</tr>`;
+      const bar = nominal
+        ? `<td class="bar-cell"><div class="bar-track"><div class="bar-fill ${r.pct < 0 ? 'loss' : ''}" style="width:${Math.max(2, (r.size || 0) * 100)}%"></div></div></td>`
+        : '';
+      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${r.sells}</td><td>${fmtDate(r.lastDate)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
     }).join('');
   }
 
   function renderTrades() {
-    bestTable('#buys-size', D.best.buysSize, 'size');
-    bestTable('#buys-pct', D.best.buysPct, 'pct');
-    bestTable('#sells-size', D.best.sellsSize, 'size');
-    bestTable('#sells-pct', D.best.sellsPct, 'pct');
+    realizedTable('#best-nominal', D.best.bestNominal, true);
+    realizedTable('#best-pct', D.best.bestPct, false);
+    realizedTable('#worst-nominal', D.best.worstNominal, true);
+    realizedTable('#worst-pct', D.best.worstPct, false);
   }
 
   renderPositions();
