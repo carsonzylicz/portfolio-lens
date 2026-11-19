@@ -39,29 +39,40 @@
     return Array.from({ length: n }, (_, i) => lo + step * i);
   };
 
-  function spark(p) {
-    const W = 360, H = 112, pl = 4, pr = 4, pt = 8, pb = 16;
-    const pts = p.pct.map((v, i) => [i, v]).filter(([, v]) => v != null && Number.isFinite(v));
+  function spark(p, commonStart, commonEnd) {
+    const W = 280, H = 104, pl = 2, pr = 2, pt = 6, pb = 14;
+    const pts = p.pct.map((v, i) => [p.dates[i], v]).filter(([, v]) => v != null && Number.isFinite(v));
     if (!pts.length) return null;
+    const t0 = Date.parse(commonStart), t1 = Date.parse(commonEnd);
+    const span = t1 - t0 || 1;
     const vals = pts.map(([, v]) => v);
-    let lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
-    if (hi === lo) { hi = lo + 0.01; }
-    const pad = (hi - lo) * 0.08;
-    lo -= pad; hi += pad;
-    const n = p.pct.length;
-    const x = (i) => pl + (i / Math.max(1, n - 1)) * (W - pl - pr);
-    const y = (v) => pt + (1 - (v - lo) / (hi - lo)) * (H - pt - pb);
-    const s = svg(W, H, `${p.ticker} position return`);
-    for (const t of [0]) {
-      if (t >= lo && t <= hi) s.appendChild(el('line', { x1: pl, x2: W - pr, y1: y(t), y2: y(t), stroke: '#d7d3c8', 'stroke-width': 0.8, 'stroke-dasharray': '2 3' }));
+    const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+    const ys = hi - lo || 0.01;
+    const x = (d) => pl + ((Date.parse(d) - t0) / span) * (W - pl - pr);
+    const y = (v) => H - pb - ((v - lo) / ys) * (H - pt - pb);
+    const s = svg(W, H, `${p.ticker} actual position history`);
+    const id = `spark-${p.ticker}`;
+    const defs = el('defs');
+    defs.appendChild(el('clipPath', { id: `${id}-pos` }, null));
+    defs.lastChild.appendChild(el('rect', { x: 0, y: 0, width: W, height: y(0) }));
+    defs.appendChild(el('clipPath', { id: `${id}-neg` }, null));
+    defs.lastChild.appendChild(el('rect', { x: 0, y: y(0), width: W, height: H - y(0) }));
+    s.appendChild(defs);
+    const line = pts.map(([d, v], i) => `${i ? 'L' : 'M'}${x(d).toFixed(1)},${y(v).toFixed(1)}`).join('');
+    const area = `M${x(pts[0][0]).toFixed(1)},${y(0).toFixed(1)}L${pts.map(([d, v]) => `${x(d).toFixed(1)},${y(v).toFixed(1)}`).join('L')}L${x(pts.at(-1)[0]).toFixed(1)},${y(0).toFixed(1)}Z`;
+    s.appendChild(el('path', { d: area, fill: 'rgba(47,111,237,.13)', 'clip-path': `url(#${id}-pos)` }));
+    s.appendChild(el('path', { d: area, fill: 'rgba(178,59,59,.11)', 'clip-path': `url(#${id}-neg)` }));
+    s.appendChild(el('path', { d: line, fill: 'none', stroke: '#2f6fed', 'stroke-width': 1.4, 'stroke-linejoin': 'round' }));
+    s.appendChild(el('line', { x1: pl, x2: W - pr, y1: y(0), y2: y(0), stroke: '#bdb8ab', 'stroke-dasharray': '3 4' }));
+    s.appendChild(el('circle', { cx: x(p.highDate), cy: y(p.highPct), r: 2.4, fill: GREEN }));
+    s.appendChild(el('circle', { cx: x(p.lowDate), cy: y(p.lowPct), r: 2.4, fill: RED }));
+    s.appendChild(el('circle', { cx: x(p.dates.at(-1)), cy: y(p.currentPct), r: 2.6, fill: '#1b1d22' }));
+    const y0 = Number(commonStart.slice(0, 4)), y1 = Number(commonEnd.slice(0, 4));
+    for (let yr = y0; yr <= y1; yr++) {
+      const d = `${yr}-01-01`;
+      if (Date.parse(d) < t0 || Date.parse(d) > t1) continue;
+      s.appendChild(el('text', { x: x(d), y: H - 3, fill: '#8a8f98', 'font-size': 8.5, 'font-family': 'ui-monospace, monospace', 'text-anchor': 'middle' }, yr));
     }
-    const pts2 = pts.map(([i, v]) => [x(i), y(v)]);
-    const area = `M${pts2[0][0]},${y(0)} ` + pts2.map(([xx, yy]) => `L${xx.toFixed(2)},${yy.toFixed(2)}`).join(' ') + ` L${pts2.at(-1)[0]},${y(0)} Z`;
-    s.appendChild(el('path', { d: area, fill: (p.currentPct ?? 0) >= 0 ? 'rgba(19,121,91,.10)' : 'rgba(178,59,59,.09)', stroke: 'none' }));
-    s.appendChild(el('path', { d: linePath(pts2), fill: 'none', stroke: (p.currentPct ?? 0) >= 0 ? GREEN : RED, 'stroke-width': 1.6, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
-    s.appendChild(el('circle', { cx: pts2.at(-1)[0], cy: pts2.at(-1)[1], r: 2.6, fill: (p.currentPct ?? 0) >= 0 ? GREEN : RED }));
-    s.appendChild(el('text', { x: pl, y: H - 3, fill: '#8a8f98', 'font-size': 8.5, 'font-family': 'ui-monospace, monospace' }, fmtDate(p.start)));
-    s.appendChild(el('text', { x: W - pr, y: H - 3, fill: '#8a8f98', 'font-size': 8.5, 'font-family': 'ui-monospace, monospace', 'text-anchor': 'end' }, fmtDate(p.dates.at(-1))));
     return s;
   }
 
@@ -192,8 +203,88 @@
     host.appendChild(table);
   }
 
+  const tip = () => document.querySelector('#public-tip');
+  const hideTip = () => { const t = tip(); if (t) t.hidden = true; };
+  const showTip = (html, evt) => {
+    const t = tip();
+    if (!t) return;
+    t.innerHTML = html;
+    t.hidden = false;
+    const pad = 12;
+    let x = evt.clientX + pad, y = evt.clientY + pad;
+    if (x + 240 > innerWidth) x = evt.clientX - 250;
+    if (y + 70 > innerHeight) y = evt.clientY - 70;
+    t.style.left = `${x}px`;
+    t.style.top = `${y}px`;
+  };
+
+  function bindSizeHover(host) {
+    host.onpointermove = (evt) => {
+      const svgEl = host.querySelector('svg');
+      if (!svgEl) return;
+      const rect = svgEl.getBoundingClientRect();
+      const W = 760, H = 300, pl = 52, pr = 18, pt = 14, pb = 28;
+      const sx = (evt.clientX - rect.left) * (W / rect.width);
+      const sy = (evt.clientY - rect.top) * (H / rect.height);
+      if (sx < pl || sx > W - pr || sy < pt || sy > H - pb) { hideTip(); return; }
+      const d = D.size;
+      const key = host.id === 'size-nominal' ? 'rel' : 'weight';
+      const i = Math.round(((sx - pl) / (W - pl - pr)) * (d.dates.length - 1));
+      const total = d.series.reduce((a, s) => a + (s[key][i] || 0), 0);
+      const v = (1 - (sy - pt) / (H - pt - pb)) * Math.max(total, 1);
+      let acc = 0, hit = null;
+      for (const s of d.series) {
+        const val = s[key][i] || 0;
+        if (v >= acc && v <= acc + val) { hit = s; break; }
+        acc += val;
+      }
+      if (!hit) { hideTip(); return; }
+      showTip(`<strong>${hit.ticker}</strong><br>${fmtDate(d.dates[i])}<br>${fmtPctPlain(hit.weight[i], 1)} of book`, evt);
+    };
+    host.onpointerleave = (evt) => { if (evt.pointerType !== 'touch') hideTip(); };
+    host.onpointerdown = (evt) => host.onpointermove(evt);
+  }
+
+  function renderSizePie() {
+    const host = document.querySelector('#size-pie');
+    if (!host) return;
+    const rows = D.positions.map((p) => ({ t: p.ticker, w: p.weight, color: (D.size.series.find((s) => s.ticker === p.ticker) || {}).color || '#2f6fed' }));
+    const total = rows.reduce((a, r) => a + r.w, 0) || 1;
+    const cx = 130, cy = 130, R = 102, r = 62;
+    let a = -Math.PI / 2;
+    const parts = [`<svg viewBox="0 0 260 260" role="img" aria-label="current book weights">`];
+    rows.forEach((p, i) => {
+      const frac = p.w / total;
+      const a2 = a + frac * Math.PI * 2;
+      const large = frac > 0.5 ? 1 : 0;
+      const x1 = cx + R * Math.cos(a), y1 = cy + R * Math.sin(a);
+      const x2 = cx + R * Math.cos(a2), y2 = cy + R * Math.sin(a2);
+      const x3 = cx + r * Math.cos(a2), y3 = cy + r * Math.sin(a2);
+      const x4 = cx + r * Math.cos(a), y4 = cy + r * Math.sin(a);
+      parts.push(`<path data-slice="${i}" d="M${x1.toFixed(1)},${y1.toFixed(1)}A${R},${R} 0 ${large} 1 ${x2.toFixed(1)},${y2.toFixed(1)}L${x3.toFixed(1)},${y3.toFixed(1)}A${r},${r} 0 ${large} 0 ${x4.toFixed(1)},${y4.toFixed(1)}Z" fill="${p.color}" stroke="#fff" stroke-width="1.2"/>`);
+      a = a2;
+    });
+    parts.push(`<text x="130" y="124" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a8f98">CURRENT BOOK</text>`);
+    parts.push(`<text x="130" y="140" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#5c626b">${rows.length} names</text>`);
+    parts.push('</svg>');
+    host.innerHTML = parts.join('');
+    const svgEl = host.querySelector('svg');
+    const hit = (evt) => {
+      const slice = evt.target.closest('[data-slice]');
+      if (!slice) { hideTip(); return; }
+      const p = rows[Number(slice.dataset.slice)];
+      if (!p) return;
+      showTip(`<strong>${p.t}</strong><br>${fmtPctPlain(p.w, 1)} of book`, evt);
+    };
+    svgEl.onpointermove = hit;
+    svgEl.onpointerdown = hit;
+    svgEl.onpointerleave = (evt) => { if (evt.pointerType !== 'touch') hideTip(); };
+  }
+
   function renderPositions() {
     const host = document.querySelector('#pos-grid');
+    const commonStart = D.positions.map((p) => p.start).sort()[0];
+    const commonEnd = D.positions.map((p) => p.dates.at(-1)).sort().at(-1);
     for (const p of D.positions) {
       const card = document.createElement('div');
       card.className = 'pos-card';
@@ -207,7 +298,7 @@
       card.appendChild(since);
       const chart = document.createElement('div');
       chart.className = 'pos-chart';
-      const s = spark(p);
+      const s = spark(p, commonStart, commonEnd);
       if (s) chart.appendChild(s);
       card.appendChild(chart);
       const ext = document.createElement('div');
@@ -222,8 +313,15 @@
     const legend = document.querySelector('#size-legend');
     legend.innerHTML = D.size.series.filter((s) => !s.sold).map((s) => `<span class="legend-item"><i class="swatch" style="background:${s.color}"></i>${s.ticker}</span>`).join('')
       + `<span class="legend-item"><i class="swatch" style="background:#c9c5ba"></i>sold</span>`;
-    document.querySelector('#size-nominal').appendChild(stackChart(D.size, 'rel', () => '', 'relative nominal position size, values hidden'));
-    document.querySelector('#size-weight').appendChild(stackChart(D.size, 'weight', (v) => fmtPctPlain(v, 0), 'share of book by position'));
+    const nominalHost = document.querySelector('#size-nominal');
+    const weightHost = document.querySelector('#size-weight');
+    const nominal = stackChart(D.size, 'rel', () => '', 'relative nominal position size, values hidden');
+    const weight = stackChart(D.size, 'weight', (v) => fmtPctPlain(v, 0), 'share of book by position');
+    nominalHost.appendChild(nominal);
+    weightHost.appendChild(weight);
+    bindSizeHover(nominalHost);
+    bindSizeHover(weightHost);
+    renderSizePie();
   }
 
   function renderPerformance() {

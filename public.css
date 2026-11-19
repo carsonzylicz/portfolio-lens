@@ -173,3 +173,22 @@ tbody tr:hover td { background: #faf8f2; }
 .pos-ext { display:flex; justify-content:space-between; gap:8px; margin:2px 0 2px; font-family:var(--mono); font-size:8.5px; }
 .subhead { margin:18px 0 8px; }
 .subhead p { margin:2px 0 0; color:var(--faint); font-size:10.5px; }
+.size-pie { display:flex; justify-content:center; padding:8px 0 2px; }
+.size-pie svg { width:min(260px, 100%); height:auto; display:block; }
+.public-tip {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  max-width: 260px;
+  padding: 7px 9px;
+  border: 1px solid var(--line-2);
+  border-radius: 7px;
+  background: #fffdf8;
+  color: var(--ink);
+  box-shadow: 0 6px 20px rgba(30,27,20,.12);
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.35;
+}
+.public-tip strong { font-size: 11px; }
+.pos-chart { min-height: 104px; }
