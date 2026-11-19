@@ -452,22 +452,18 @@
         </table></div>
       </div>
       <div class="era-weights">
-        <div class="era-head"><span>Capital weight by era</span><span>${fmtPctPlain(c.eraWeights.schwab, 1)} / ${fmtPctPlain(c.eraWeights.robinhood, 1)}</span></div>
+        <div class="era-head"><span>Capital weight by era</span></div>
         <div class="era-track"><i class="era-schwab" style="width:${c.eraWeights.schwab * 100}%"></i><i class="era-robinhood" style="width:${c.eraWeights.robinhood * 100}%"></i></div>
         <div class="era-legend"><span><i class="dot schwab"></i>Schwab ${fmtPctPlain(c.eraWeights.schwab, 1)}</span><span><i class="dot robinhood"></i>Robinhood ${fmtPctPlain(c.eraWeights.robinhood, 1)}</span></div>
       </div>
       <div class="table-wrap weighted-table"><table><thead><tr><th>Year</th><th>Weight</th><th>Portfolio</th><th>SPY</th><th>QQQ</th><th>vs SPY</th><th>vs QQQ</th></tr></thead><tbody>${c.byYear.map(row).join('')}</tbody></table></div>
-      <div class="weighted-foot">Capital-weighted annual is arithmetic and annualized; weights are dollar-years. CAGR is compounded. * partial year</div>`;
+      <div class="weighted-foot">Dollar-year weights; annualized. CAGR compounded. * partial.</div>`;
   }
 
   function renderPerformance() {
     const all = D.combined;
     document.querySelector('#all-window').textContent = `${fmtDate(all.start)} → ${fmtDate(all.end)}`;
-    const allHost = document.querySelector('#all-summary');
-    allHost.className = 'all-metrics';
-    allHost.innerHTML = `<div class="all-main"><span>All history</span><strong class="${all.summary.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.portfolio, 1)}</strong><em>CAGR ${fmtPct(all.cagr.portfolio, 1)} · Aug 2017 → Nov 2026</em></div>
-      <div class="all-bench"><span>SPY</span><b class="${all.summary.spy < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.spy, 1)}</b><em class="${all.summary.excess < 0 ? 'neg' : 'pos'}">Portfolio ${fmtPP(all.summary.excess)}</em></div>
-      <div class="all-bench"><span>QQQ</span><b class="${all.summary.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.qqq, 1)}</b><em class="${all.summary.excessQqq < 0 ? 'neg' : 'pos'}">Portfolio ${fmtPP(all.summary.excessQqq)}</em></div>`;
+
     document.querySelector('#all-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
     document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ', all.cut));
     scrollToEnd(document.querySelector('#all-chart'));
