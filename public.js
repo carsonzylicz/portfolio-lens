@@ -286,10 +286,56 @@
     svgEl.onpointerleave = (evt) => { if (evt.pointerType !== 'touch') hideTip(); };
   }
 
+  let posCharts = [];
+  let posCommon = null;
+
+  function bindPosScrub() {
+    const slider = document.querySelector('#pos-scrub');
+    const dateEl = document.querySelector('#pos-date');
+    if (!slider || !posCommon) return;
+    const dates = [...new Set(posCharts.flatMap((c) => c.p.dates))].sort();
+    slider.max = String(dates.length - 1);
+    slider.value = String(dates.length - 1);
+    const apply = (idx) => {
+      const d = dates[Math.max(0, Math.min(dates.length - 1, Number(idx)))];
+      dateEl.textContent = fmtDate(d);
+      for (const { p, svg: svgEl, card } of posCharts) {
+        const ro = card.querySelector('.pos-scrub-readout');
+        let line = svgEl.querySelector('.pos-scrub-line');
+        let dot = svgEl.querySelector('.pos-scrub-dot');
+        if (d < p.start) {
+          line?.remove(); dot?.remove();
+          if (ro) ro.textContent = 'not held';
+          continue;
+        }
+        const W = 280, H = 104, pl = 2, pr = 2, pt = 6, pb = 14;
+        const t0 = Date.parse(posCommon.start), t1 = Date.parse(posCommon.end);
+        const span = t1 - t0 || 1;
+        const vals = p.pct.filter((v) => v != null && Number.isFinite(v));
+        const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+        const ys = hi - lo || 0.01;
+        const x = pl + ((Date.parse(d) - t0) / span) * (W - pl - pr);
+        let q = null;
+        for (let i = 0; i < p.dates.length; i++) if (p.dates[i] <= d) q = p.pct[i];
+        if (q == null) { line?.remove(); dot?.remove(); if (ro) ro.textContent = 'not held'; continue; }
+        const y = H - pb - ((q - lo) / ys) * (H - pt - pb);
+        if (!line) { line = el('line', { class: 'pos-scrub-line', stroke: '#1b1d22', 'stroke-dasharray': '2 3', 'stroke-width': 1 }); svgEl.appendChild(line); }
+        if (!dot) { dot = el('circle', { class: 'pos-scrub-dot', r: 2.4, fill: '#1b1d22' }); svgEl.appendChild(dot); }
+        line.setAttribute('x1', x); line.setAttribute('x2', x); line.setAttribute('y1', pt); line.setAttribute('y2', H - pb);
+        dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+        if (ro) ro.textContent = `${fmtPct(q)} · ${fmtDate(d)}`;
+      }
+    };
+    slider.oninput = () => apply(slider.value);
+    apply(slider.value);
+  }
+
   function renderPositions() {
     const host = document.querySelector('#pos-grid');
+    posCharts = [];
     const commonStart = D.positions.map((p) => p.start).sort()[0];
     const commonEnd = D.positions.map((p) => p.dates.at(-1)).sort().at(-1);
+    posCommon = { start: commonStart, end: commonEnd };
     for (const p of D.positions) {
       const card = document.createElement('div');
       card.className = 'pos-card';
@@ -310,8 +356,11 @@
       ext.className = 'pos-ext';
       ext.innerHTML = `<span class="pos">high ${fmtPct(p.highPct)} · ${fmtDate(p.highDate)}</span><span class="neg">low ${fmtPct(p.lowPct)} · ${fmtDate(p.lowDate)}</span>`;
       card.appendChild(ext);
+      const ro = document.createElement('div'); ro.className = 'pos-scrub-readout'; card.appendChild(ro);
+      posCharts.push({ p, svg: s, card });
       host.appendChild(card);
     }
+    bindPosScrub();
   }
 
   function renderSize() {

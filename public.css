@@ -201,3 +201,8 @@ tbody tr:hover td { background: #faf8f2; }
 .tip-row.hot { background:#f3efe3; }
 .tip-more { color:var(--faint); margin-top:3px; font-size:9px; }
 .subperiod { margin-top:10px; }
+.scrub { display:flex; align-items:center; gap:10px; margin:0 0 10px; }
+.scrub-label { font-family:var(--mono); font-size:9px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; }
+.scrub input[type=range] { flex:1; accent-color: var(--green); }
+.scrub-date { font-family:var(--mono); font-size:10px; color:var(--muted); min-width:100px; text-align:right; }
+.pos-scrub-readout { font-family:var(--mono); font-size:8.5px; color:var(--faint); min-height:11px; margin-top:1px; }
