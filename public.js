@@ -515,6 +515,17 @@
     host.innerHTML = `<table><thead><tr><th>Schwab period</th><th>Portfolio</th><th>SPY</th><th>QQQ</th></tr></thead><tbody><tr><td>2017–2021</td><td class="${one.p < 0 ? 'neg' : 'pos'}">${fmtPct(one.p)}</td><td class="${one.s < 0 ? 'neg' : 'pos'}">${fmtPct(one.s)}</td><td class="${one.q < 0 ? 'neg' : 'pos'}">${fmtPct(one.q)}</td></tr><tr><td>2022–2024</td><td class="${two.p < 0 ? 'neg' : 'pos'}">${fmtPct(two.p)}</td><td class="${two.s < 0 ? 'neg' : 'pos'}">${fmtPct(two.s)}</td><td class="${two.q < 0 ? 'neg' : 'pos'}">${fmtPct(two.q)}</td></tr></tbody></table>`;
   }
 
+  function renderHouse() {
+    const h = D.house;
+    const summary = document.querySelector('#house-summary');
+    const body = document.querySelector('#house-table tbody');
+    if (!h || !summary || !body) return;
+    const card = (label, value) => `<div class="house-card"><span>${label}</span><strong class="${value < 0 ? 'neg' : 'pos'}">${fmtPct(value, 1)}</strong></div>`;
+    summary.innerHTML = card('Overall', h.overall) + card('Current positions', h.current) + card('Closed names', h.closed);
+    const row = (label, weight, value, cls = '') => `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${value < 0 ? 'neg' : 'pos'}">${fmtPct(value, 1)}</td></tr>`;
+    body.innerHTML = h.rows.map((r) => row(r.ticker, r.weight, r.house)).join('') + row('Closed names', null, h.closed, 'house-closed');
+  }
+
   function renderReplacement() {
     const r = D.replacement;
     cards(document.querySelector('#rep-summary'), [
@@ -561,6 +572,7 @@
   renderPositions();
   renderSize();
   renderPerformance();
+  renderHouse();
   renderReplacement();
   renderTrades();
   document.querySelector('#asof').textContent = `Updated ${fmtDate(D.asOf)} · positions, shares and percentages only`;
