@@ -263,13 +263,16 @@
         if (v >= acc && v <= acc + val) { hit = s; break; }
         acc += val;
       }
-      const items = d.series.map((s) => ({ ticker: s.ticker, color: s.color, sold: s.sold, weight: s.weight[i] || 0 })).filter((x) => x.weight > 0);
-      const cur = items.filter((x) => !x.sold).sort((a, b) => b.weight - a.weight);
-      const sold = items.filter((x) => x.sold).sort((a, b) => b.weight - a.weight);
+      const val = (s) => s[key][i] || 0;
+      const items = d.series.map((s) => ({ ticker: s.ticker, color: s.color, sold: s.sold, val: val(s) })).filter((x) => x.val > 0);
+      const cur = items.filter((x) => !x.sold).sort((a, b) => b.val - a.val);
+      const sold = items.filter((x) => x.sold).sort((a, b) => b.val - a.val);
       const shown = sold.slice(0, 12);
-      const row = (x) => `<div class="tip-row ${x.ticker === hit?.ticker ? 'hot' : ''}"><i style="background:${x.color}"></i><span>${x.ticker}</span><b>${fmtPctPlain(x.weight, 1)}</b></div>`;
-      const more = sold.length > shown.length ? `<div class="tip-more">+${sold.length - shown.length} more sold · ${fmtPctPlain(sold.slice(shown.length).reduce((a, x) => a + x.weight, 0), 1)} of book</div>` : '';
-      showTip(`<div class="tip-head">${fmtDate(d.dates[i])} · ${items.length} names</div><div class="tip-sec">Current</div>${cur.map(row).join('')}<div class="tip-sec">Sold</div>${shown.map(row).join('')}${more}`, evt);
+      const row = (x) => `<div class="tip-row ${x.ticker === hit?.ticker ? 'hot' : ''}"><i style="background:${x.color}"></i><span>${x.ticker}</span><b>${fmtPctPlain(x.val, 1)}</b></div>`;
+      const unit = key === 'rel' ? 'of Feb 2024 book' : 'of book';
+      const more = sold.length > shown.length ? `<div class="tip-more">+${sold.length - shown.length} more sold · ${fmtPctPlain(sold.slice(shown.length).reduce((a, x) => a + x.val, 0), 1)} ${unit}</div>` : '';
+      const metric = key === 'rel' ? 'size vs Feb 2024' : 'share of book';
+      showTip(`<div class="tip-head">${fmtDate(d.dates[i])} · ${metric}</div><div class="tip-sec">Current</div>${cur.map(row).join('')}<div class="tip-sec">Sold</div>${shown.map(row).join('')}${more}`, evt);
     };
     host.onpointerleave = (evt) => { if (evt.pointerType !== 'touch') hideTip(); };
     host.onpointerdown = (evt) => host.onpointermove(evt);
@@ -416,7 +419,7 @@
       + `<span class="legend-item"><i class="swatch" style="background:#c9c5ba"></i>sold</span>`;
     const nominalHost = document.querySelector('#size-nominal');
     const weightHost = document.querySelector('#size-weight');
-    const nominal = stackChart(D.size, 'rel', () => '', 'relative nominal position size, values hidden');
+    const nominal = stackChart(D.size, 'rel', () => '', 'position size relative to the February 2024 book');
     const weight = stackChart(D.size, 'weight', (v) => fmtPctPlain(v, 0), 'share of book by position');
     nominalHost.appendChild(nominal);
     weightHost.appendChild(weight);
