@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio Lens — public</title>
+  <link rel="stylesheet" href="public.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="kicker">PUBLIC VIEW</div>
+      <h1>Portfolio Lens</h1>
+      <p class="sub">Positions, position size, performance and trades. <strong>No dollar amounts.</strong></p>
+      <nav>
+        <a href="#positions">Positions</a>
+        <a href="#size">Position size</a>
+        <a href="#performance">Performance</a>
+        <a href="#replacement">Replacement</a>
+        <a href="#trades">Best trades</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="asof" id="asof"></p>
+
+    <section class="panel" id="positions">
+      <div class="section-head">
+        <h2>Per position — actual history</h2>
+        <p>Each chart is the actual position return, percent only. The line starts when the position was first held.</p>
+      </div>
+      <div class="pos-grid" id="pos-grid"></div>
+    </section>
+
+    <section class="panel" id="size">
+      <div class="section-head">
+        <h2>Position size</h2>
+        <p>Shares held over time and each position’s share of the book. Shares and percentages only.</p>
+      </div>
+      <div class="chart-block">
+        <div class="chart-head"><h3>Shares held</h3><span class="hint">stacked share count</span></div>
+        <div class="legend" id="size-legend"></div>
+        <div class="chart" id="size-shares"></div>
+      </div>
+      <div class="chart-block">
+        <div class="chart-head"><h3>Share of book</h3><span class="hint">percent of the book</span></div>
+        <div class="chart" id="size-weight"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="performance">
+      <div class="section-head">
+        <h2>Actual vs SPY and QQQ</h2>
+        <p>Holdings-weighted actual returns. The two eras are separate: Schwab was the earlier account; Robinhood is the current account.</p>
+      </div>
+      <div class="era" id="era-robinhood">
+        <div class="era-head"><h3>Robinhood era</h3><span id="rh-window"></span></div>
+        <div class="summary" id="rh-summary"></div>
+        <div class="legend" id="rh-legend"></div>
+        <div class="chart" id="rh-chart"></div>
+        <div class="year-table" id="rh-years"></div>
+      </div>
+      <div class="era" id="era-schwab">
+        <div class="era-head"><h3>Schwab era</h3><span id="schwab-window"></span></div>
+        <div class="summary" id="schwab-summary"></div>
+        <div class="chart" id="schwab-chart"></div>
+        <div class="year-table" id="schwab-years"></div>
+        <p class="note">Schwab era starts when the price archive covers the positions; earlier trades are in best trades.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="replacement">
+      <div class="section-head">
+        <h2>Replacement — what you missed vs what you replaced it with</h2>
+        <p>Each point is a sale: the sold stock’s return after the sale (missed) against the book’s return since the sale (replaced). Percent only; points above the 45° line did better in the book.</p>
+      </div>
+      <div class="summary" id="rep-summary"></div>
+      <div class="chart" id="rep-chart"></div>
+      <div class="table-wrap"><table id="rep-table"><thead><tr><th>Ticker</th><th>Date</th><th>Missed</th><th>Replaced</th><th>Net</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section class="panel" id="trades">
+      <div class="section-head">
+        <h2>Best 10 buys and sells</h2>
+        <p>By relative size and by percent. The size lists are ranked by dollar size internally; the bars are relative and no dollar amounts are shown.</p>
+      </div>
+      <div class="trade-grid">
+        <div class="trade-card"><h3>Best buys — by size</h3><div class="table-wrap"><table id="buys-size"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Relative size</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best buys — by percent</h3><div class="table-wrap"><table id="buys-pct"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best sells — by size</h3><div class="table-wrap"><table id="sells-size"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Relative size</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best sells — by percent</h3><div class="table-wrap"><table id="sells-pct"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+      </div>
+      <p class="note">Best buys by percent use the exit price for closed lots and the last available mark for open lots. Best sells by percent use realized FIFO return. Size is ranked on the full trade set.</p>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Personal portfolio. Percentages, shares and relative size only; no dollar amounts, account numbers or names. Not investment advice.</p>
+    <p id="foot-source"></p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="public.js"></script>
+</body>
+</html>
