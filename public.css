@@ -206,3 +206,12 @@ tbody tr:hover td { background: #faf8f2; }
 .scrub input[type=range] { flex:1; accent-color: var(--green); }
 .scrub-date { font-family:var(--mono); font-size:10px; color:var(--muted); min-width:100px; text-align:right; }
 .pos-scrub-readout { font-family:var(--mono); font-size:8.5px; color:var(--faint); min-height:11px; margin-top:1px; }
+.weighted { margin:12px 0 8px; }
+.weighted-head { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin-bottom:6px; }
+.weighted-head div { border:1px solid var(--line); border-radius:8px; padding:7px 9px; background:#fdfcf9; }
+.weighted-head span { display:block; font-family:var(--mono); font-size:8px; color:var(--faint); text-transform:uppercase; letter-spacing:.06em; }
+.weighted-head strong { display:block; font-family:var(--mono); font-size:15px; margin-top:1px; }
+.weighted-meta { font-family:var(--mono); font-size:9.5px; color:var(--muted); margin:2px 0 6px; }
+.weighted-row td { font-weight:700; border-top:1px solid var(--line-2); }
+.weighted-foot { color:var(--faint); font-size:9.5px; margin-top:5px; }
+@media(max-width:760px){ .weighted-head { grid-template-columns:repeat(2,minmax(0,1fr)); } }

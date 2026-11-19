@@ -378,6 +378,18 @@
     renderSizePie();
   }
 
+  function renderAllWeighted() {
+    const host = document.querySelector('#all-weighted');
+    if (!host) return;
+    const c = D.combined;
+    const row = (y, cls = '') => `<tr class="${cls}"><td>${y.year}${y.partial ? '*' : ''}</td><td>${fmtPctPlain(y.weight, 1)}</td><td class="${y.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(y.portfolio)}</td><td class="${y.spy < 0 ? 'neg' : 'pos'}">${fmtPct(y.spy)}</td><td class="${y.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(y.qqq)}</td><td class="${y.excess < 0 ? 'neg' : 'pos'}">${fmtPP(y.excess)}</td><td class="${y.excessQqq < 0 ? 'neg' : 'pos'}">${fmtPP(y.excessQqq)}</td></tr>`;
+    const w = c.weighted;
+    host.innerHTML = `<div class="weighted-head"><div><span>Capital-weighted annual return</span><strong class="${w.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(w.portfolio, 1)}</strong></div><div><span>SPY</span><strong class="${w.spy < 0 ? 'neg' : 'pos'}">${fmtPct(w.spy, 1)}</strong></div><div><span>QQQ</span><strong class="${w.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(w.qqq, 1)}</strong></div><div><span>Excess vs SPY</span><strong class="${w.excess < 0 ? 'neg' : 'pos'}">${fmtPP(w.excess)}</strong></div><div><span>Excess vs QQQ</span><strong class="${w.excessQqq < 0 ? 'neg' : 'pos'}">${fmtPP(w.excessQqq)}</strong></div></div>
+      <div class="weighted-meta">Era capital weights: Schwab ${fmtPctPlain(c.eraWeights.schwab, 1)} · Robinhood ${fmtPctPlain(c.eraWeights.robinhood, 1)} · all-history compounded ${fmtPct(c.summary.portfolio, 1)}</div>
+      <div class="table-wrap"><table><thead><tr><th>Year</th><th>Weight</th><th>Portfolio</th><th>SPY</th><th>QQQ</th><th>vs SPY</th><th>vs QQQ</th></tr></thead><tbody>${c.byYear.map((y) => row(y)).join('')}<tr class="weighted-row"><td>Capital-weighted avg</td><td>100.0%</td><td class="${w.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(w.portfolio)}</td><td class="${w.spy < 0 ? 'neg' : 'pos'}">${fmtPct(w.spy)}</td><td class="${w.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(w.qqq)}</td><td class="${w.excess < 0 ? 'neg' : 'pos'}">${fmtPP(w.excess)}</td><td class="${w.excessQqq < 0 ? 'neg' : 'pos'}">${fmtPP(w.excessQqq)}</td></tr></tbody></table></div>
+      <div class="weighted-foot">Weights are average invested book value per year. Later years carry more capital because of deposits. * partial year.</div>`;
+  }
+
   function renderPerformance() {
     const all = D.combined;
     document.querySelector('#all-window').textContent = `${fmtDate(all.start)} → ${fmtDate(all.end)}`;
@@ -390,6 +402,7 @@
     ]);
     document.querySelector('#all-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
     document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ', all.cut));
+    renderAllWeighted();
 
     const rh = D.perf;
     document.querySelector('#rh-window').textContent = `${fmtDate(rh.start)} → ${fmtDate(rh.end)}`;
