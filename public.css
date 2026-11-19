@@ -215,3 +215,68 @@ tbody tr:hover td { background: #faf8f2; }
 .weighted-row td { font-weight:700; border-top:1px solid var(--line-2); }
 .weighted-foot { color:var(--faint); font-size:9.5px; margin-top:5px; }
 @media(max-width:760px){ .weighted-head { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.weighted-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fdfcf9;
+  margin: 12px 0 10px;
+}
+.weighted-main .eyebrow { display: block; font-family: var(--mono); font-size: 8.5px; letter-spacing: .1em; color: var(--faint); }
+.weighted-big { display: block; font-family: var(--mono); font-size: 44px; line-height: 1; letter-spacing: -.04em; margin: 5px 0 4px; }
+.weighted-sub { display: block; color: var(--muted); font-size: 10.5px; }
+.weighted-bench { display: grid; gap: 7px; }
+.bench-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) 62px 92px; align-items: center; gap: 8px; }
+.bench-name { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.bench-track { height: 8px; background: #eee9de; border-radius: 4px; overflow: hidden; }
+.bench-track i { display: block; height: 100%; border-radius: 4px; background: #8a8f98; }
+.bench-row:nth-child(2) .bench-track i { background: #b8b3a8; }
+.bench-val { font-family: var(--mono); font-size: 12px; font-weight: 700; text-align: right; }
+.bench-delta { font-family: var(--mono); font-size: 9.5px; text-align: right; }
+.weighted-note { color: var(--faint); font-family: var(--mono); font-size: 9px; margin-top: 1px; }
+.era-weights { margin: 8px 0 10px; }
+.era-head { display: flex; justify-content: space-between; gap: 10px; font-family: var(--mono); font-size: 9px; color: var(--faint); }
+.era-track { display: flex; height: 9px; border-radius: 5px; overflow: hidden; background: #eee9de; margin-top: 4px; }
+.era-track i { display: block; height: 100%; }
+.era-schwab { background: #8a8f98; }
+.era-robinhood { background: var(--green); }
+.era-legend { display: flex; gap: 16px; margin-top: 4px; font-family: var(--mono); font-size: 8.5px; color: var(--muted); }
+.era-legend .dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 4px; }
+.era-legend .dot.schwab { background: #8a8f98; }
+.era-legend .dot.robinhood { background: var(--green); }
+.weighted-table { margin-top: 2px; }
+.weighted-table table { min-width: 620px; }
+.weighted-foot { color: var(--faint); font-size: 9px; margin-top: 5px; }
+@media (max-width: 760px) {
+  .weighted-hero { grid-template-columns: 1fr; padding: 12px; gap: 11px; }
+  .weighted-big { font-size: 38px; }
+  .bench-row { grid-template-columns: 34px minmax(0, 1fr) 58px; }
+  .bench-delta { grid-column: 2 / 4; text-align: left; margin-top: -4px; }
+  .chart { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .chart svg { min-width: 620px; }
+  .weighted-table table { min-width: 640px; }
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+}
+.mobile-only { display: none; }
+@media (max-width: 760px) {
+  .mobile-only { display: inline; color: var(--faint); font-family: var(--mono); font-size: 8.5px; white-space: nowrap; }
+  .weighted-table table { min-width: 0; }
+  .weighted-table th:nth-child(4), .weighted-table td:nth-child(4),
+  .weighted-table th:nth-child(5), .weighted-table td:nth-child(5) { display: none; }
+  .weighted-table th, .weighted-table td { padding: 6px 4px; font-size: 9.5px; }
+  .year-table th:nth-child(3), .year-table td:nth-child(3),
+  .year-table th:nth-child(4), .year-table td:nth-child(4) { display: none; }
+  .year-table th, .year-table td { padding: 6px 4px; font-size: 9.5px; }
+  .subperiod table { font-size: 9.5px; }
+  .subperiod th, .subperiod td { padding: 6px 4px; }
+  .trade-card .table-wrap { -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 760px) {
+  .subperiod { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .subperiod table { table-layout: fixed; width: 100%; font-size: 8.5px; }
+  .subperiod th, .subperiod td { padding: 6px 3px; white-space: normal; }
+}
