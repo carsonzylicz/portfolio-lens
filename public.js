@@ -204,7 +204,8 @@
   }
 
   const tip = () => document.querySelector('#public-tip');
-  const hideTip = () => { const t = tip(); if (t) t.hidden = true; };
+  let tipTimer = null;
+  const hideTip = () => { if (tipTimer) { clearTimeout(tipTimer); tipTimer = null; } const t = tip(); if (t) t.hidden = true; };
   const showTip = (html, evt) => {
     const t = tip();
     if (!t) return;
@@ -216,7 +217,17 @@
     if (y + 70 > innerHeight) y = evt.clientY - 70;
     t.style.left = `${x}px`;
     t.style.top = `${y}px`;
+    if (tipTimer) clearTimeout(tipTimer);
+    tipTimer = setTimeout(hideTip, 4000);
   };
+  document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#size-nominal, #size-weight, #size-pie')) hideTip(); });
+  window.addEventListener('scroll', hideTip, { passive: true });
+
+  function scrollToEnd(host) {
+    if (!host) return;
+    if (innerWidth > 760) return;
+    requestAnimationFrame(() => { host.scrollLeft = host.scrollWidth; });
+  }
 
   function bindSizeHover(host) {
     host.onpointermove = (evt) => {
@@ -327,6 +338,22 @@
       }
     };
     slider.oninput = () => apply(slider.value);
+    const t0s = Date.parse(posCommon.start), t1s = Date.parse(posCommon.end), spans = t1s - t0s || 1;
+    for (const { p, svg: svgEl } of posCharts) {
+      const setFrom = (evt) => {
+        const rect = svgEl.getBoundingClientRect();
+        const sx = (evt.clientX - rect.left) * (280 / rect.width);
+        const frac = Math.max(0, Math.min(1, (sx - 2) / 276));
+        const d = new Date(t0s + frac * spans).toISOString().slice(0, 10);
+        let best = 0, bestDiff = Infinity;
+        dates.forEach((x, i) => { const diff = Math.abs(Date.parse(x) - Date.parse(d)); if (diff < bestDiff) { bestDiff = diff; best = i; } });
+        slider.value = String(best);
+        apply(best);
+      };
+      svgEl.onpointerdown = (evt) => { svgEl.setPointerCapture(evt.pointerId); setFrom(evt); evt.preventDefault(); };
+      svgEl.onpointermove = (evt) => { if (svgEl.hasPointerCapture(evt.pointerId)) setFrom(evt); };
+      svgEl.onpointerup = (evt) => { try { svgEl.releasePointerCapture(evt.pointerId); } catch {} };
+    }
     apply(slider.value);
   }
 
@@ -363,6 +390,12 @@
     bindPosScrub();
   }
 
+  function renderCurrentBook() {
+    const host = document.querySelector('#current-book-table');
+    if (!host) return;
+    host.innerHTML = `<table><thead><tr><th>Ticker</th><th>Shares</th><th>Weight</th></tr></thead><tbody>${D.positions.map((p) => `<tr><td>${p.ticker}</td><td>${fmtShares(p.shares)}</td><td>${fmtPctPlain(p.weight, 1)}</td></tr>`).join('')}</tbody></table>`;
+  }
+
   function renderSize() {
     const legend = document.querySelector('#size-legend');
     legend.innerHTML = D.size.series.filter((s) => !s.sold).map((s) => `<span class="legend-item"><i class="swatch" style="background:${s.color}"></i>${s.ticker}</span>`).join('')
@@ -376,6 +409,9 @@
     bindSizeHover(nominalHost);
     bindSizeHover(weightHost);
     renderSizePie();
+    renderCurrentBook();
+    scrollToEnd(nominalHost);
+    scrollToEnd(weightHost);
   }
 
   function renderAllWeighted() {
@@ -410,15 +446,14 @@
   function renderPerformance() {
     const all = D.combined;
     document.querySelector('#all-window').textContent = `${fmtDate(all.start)} → ${fmtDate(all.end)}`;
-    cards(document.querySelector('#all-summary'), [
-      { label: 'Portfolio', value: fmtPct(all.summary.portfolio), cls: all.summary.portfolio < 0 ? 'neg' : 'pos' },
-      { label: 'SPY', value: fmtPct(all.summary.spy), cls: all.summary.spy < 0 ? 'neg' : 'pos' },
-      { label: 'QQQ', value: fmtPct(all.summary.qqq), cls: all.summary.qqq < 0 ? 'neg' : 'pos' },
-      { label: 'Excess vs SPY', value: fmtPP(all.summary.excess), cls: all.summary.excess < 0 ? 'neg' : 'pos' },
-      { label: 'Excess vs QQQ', value: fmtPP(all.summary.excessQqq), cls: all.summary.excessQqq < 0 ? 'neg' : 'pos' },
-    ]);
+    const allHost = document.querySelector('#all-summary');
+    allHost.className = 'all-metrics';
+    allHost.innerHTML = `<div class="all-main"><span>All history</span><strong class="${all.summary.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.portfolio, 1)}</strong><em>Aug 2017 → Nov 2026</em></div>
+      <div class="all-bench"><span>SPY</span><b class="${all.summary.spy < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.spy, 1)}</b><em class="${all.summary.excess < 0 ? 'neg' : 'pos'}">Portfolio ${fmtPP(all.summary.excess)}</em></div>
+      <div class="all-bench"><span>QQQ</span><b class="${all.summary.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(all.summary.qqq, 1)}</b><em class="${all.summary.excessQqq < 0 ? 'neg' : 'pos'}">Portfolio ${fmtPP(all.summary.excessQqq)}</em></div>`;
     document.querySelector('#all-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
     document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ', all.cut));
+    scrollToEnd(document.querySelector('#all-chart'));
     renderAllWeighted();
 
     const rh = D.perf;
@@ -432,6 +467,7 @@
     ]);
     document.querySelector('#rh-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
     document.querySelector('#rh-chart').appendChild(lineChart(rh, 'Robinhood era portfolio versus SPY and QQQ'));
+    scrollToEnd(document.querySelector('#rh-chart'));
     yearTable(document.querySelector('#rh-years'), rh.byYear);
 
     const sh = D.schwab;
@@ -444,6 +480,7 @@
       { label: 'Excess vs QQQ', value: fmtPP(sh.summary.excessQqq), cls: sh.summary.excessQqq < 0 ? 'neg' : 'pos' },
     ]);
     document.querySelector('#schwab-chart').appendChild(lineChart(sh, 'Schwab era portfolio versus SPY and QQQ'));
+    scrollToEnd(document.querySelector('#schwab-chart'));
     renderSchwabPeriods(sh);
     yearTable(document.querySelector('#schwab-years'), sh.byYear);
   }

@@ -280,3 +280,20 @@ tbody tr:hover td { background: #faf8f2; }
   .subperiod table { table-layout: fixed; width: 100%; font-size: 8.5px; }
   .subperiod th, .subperiod td { padding: 6px 3px; white-space: normal; }
 }
+.book-grid { display:grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap:14px; align-items:center; margin:6px 0 14px; }
+.book-panel { min-width:0; }
+.book-title { font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin-bottom:2px; }
+.book-table table { min-width:0; }
+.all-metrics { display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:8px; margin:10px 0 8px; }
+.all-main, .all-bench { border:1px solid var(--line); border-radius:8px; padding:9px 11px; background:#fdfcf9; }
+.all-main span, .all-bench span { display:block; font-family:var(--mono); font-size:8.5px; color:var(--faint); text-transform:uppercase; letter-spacing:.06em; }
+.all-main strong { display:block; font-family:var(--mono); font-size:25px; line-height:1; margin:3px 0 2px; }
+.all-main em, .all-bench em { font-style:normal; color:var(--faint); font-size:9px; }
+.all-bench b { display:block; font-family:var(--mono); font-size:16px; margin:2px 0; }
+.pos-chart svg { cursor: crosshair; touch-action: none; }
+@media (max-width:760px){
+  .book-grid { grid-template-columns:1fr; }
+  .all-metrics { grid-template-columns:1fr 1fr; }
+  .all-main { grid-column:1 / -1; }
+  .book-table table { min-width:0; }
+}

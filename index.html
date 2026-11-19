@@ -13,10 +13,10 @@
       <h1>Carson Zylicz Fund</h1>
       <p class="sub">Positions, size, performance, trades.</p>
       <nav>
-        <a href="#positions">Positions</a>
         <a href="#size">Position size</a>
-        <a href="#performance">Performance</a>
+        <a href="#performance">Returns</a>
         <a href="#replacement">Replacement</a>
+        <a href="#positions">Positions</a>
         <a href="#trades">Best trades</a>
       </nav>
     </div>
@@ -25,19 +25,20 @@
   <main class="wrap">
     <p class="asof" id="asof"></p>
 
-    <section class="panel" id="positions">
-      <div class="section-head">
-        <h2>Per position — actual history</h2>
-        <p>Actual position return; the line starts when the position was first held.</p>
-      </div>
-      <div class="scrub"><span class="scrub-label">Scrub</span><input type="range" id="pos-scrub" min="0" max="0" value="0"><span class="scrub-date" id="pos-date"></span></div>
-      <div class="pos-grid" id="pos-grid"></div>
-    </section>
-
     <section class="panel" id="size">
       <div class="section-head">
         <h2>Position size</h2>
-        <p>Nominal and share of book; grey bands are sold. <span class="mobile-only">Swipe charts →</span></p>
+        <p>Current book first, then nominal and share of book. Grey bands are sold.</p>
+      </div>
+      <div class="book-grid">
+        <div class="book-panel">
+          <div class="book-title">Current book</div>
+          <div class="size-pie" id="size-pie"></div>
+        </div>
+        <div class="book-panel">
+          <div class="book-title">Current weights</div>
+          <div class="table-wrap book-table" id="current-book-table"></div>
+        </div>
       </div>
       <div class="chart-block">
         <div class="chart-head"><h3>Nominal — relative size</h3></div>
@@ -48,23 +49,20 @@
         <div class="chart-head"><h3>Share of book</h3><span class="hint">percent of the book</span></div>
         <div class="chart" id="size-weight"></div>
       </div>
-      <div class="chart-block">
-        <div class="chart-head"><h3>Current book</h3><span class="hint">hover or tap a slice</span></div>
-        <div class="size-pie" id="size-pie"></div>
-      </div>
     </section>
+
 
     <section class="panel" id="performance">
       <div class="section-head">
         <h2>Actual vs SPY and QQQ</h2>
         <p>Schwab from Aug 2017; split-adjusted; dividends included. SPY/QQQ are price returns. Linked at Jan 2024. <span class="mobile-only">Swipe charts →</span></p>
       </div>
+      <div class="weighted" id="all-weighted"></div>
       <div class="era" id="era-all">
         <div class="era-head"><h3>All history — Schwab + Robinhood</h3><span id="all-window"></span></div>
         <div class="summary" id="all-summary"></div>
         <div class="legend" id="all-legend"></div>
         <div class="chart" id="all-chart"></div>
-        <div class="weighted" id="all-weighted"></div>
         <p class="note">Linked at Jan 2024 when the account changed. The dashed vertical line marks the switch.</p>
       </div>
       <div class="era" id="era-robinhood">
@@ -92,6 +90,15 @@
       <div class="summary" id="rep-summary"></div>
       <div class="chart" id="rep-chart"></div>
       <div class="table-wrap"><table id="rep-table"><thead><tr><th>Ticker</th><th>Date</th><th>Missed</th><th>Replaced</th><th>Net</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section class="panel" id="positions">
+      <div class="section-head">
+        <h2>Per position — actual history</h2>
+        <p>Actual position return; the line starts when the position was first held.</p>
+      </div>
+      <div class="scrub"><span class="scrub-label">Scrub</span><input type="range" id="pos-scrub" min="0" max="0" value="0"><span class="scrub-date" id="pos-date"></span></div>
+      <div class="pos-grid" id="pos-grid"></div>
     </section>
 
     <section class="panel" id="trades">
