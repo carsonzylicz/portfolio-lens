@@ -215,12 +215,26 @@
     let x = evt.clientX + pad, y = evt.clientY + pad;
     if (x + 240 > innerWidth) x = evt.clientX - 250;
     if (y + 70 > innerHeight) y = evt.clientY - 70;
-    t.style.left = `${x}px`;
-    t.style.top = `${y}px`;
+    const mobile = innerWidth <= 760;
+    if (mobile) {
+      t.classList.add('is-mobile');
+      t.style.left = '50%';
+      t.style.transform = 'translateX(-50%)';
+      t.style.top = 'auto';
+      t.style.bottom = '14px';
+      t.style.maxWidth = 'calc(100vw - 24px)';
+    } else {
+      t.classList.remove('is-mobile');
+      t.style.transform = '';
+      t.style.top = `${y}px`;
+      t.style.bottom = 'auto';
+      t.style.left = `${x}px`;
+      t.style.maxWidth = '';
+    }
     if (tipTimer) clearTimeout(tipTimer);
-    tipTimer = setTimeout(hideTip, 4000);
+    tipTimer = setTimeout(hideTip, mobile ? 6000 : 4000);
   };
-  document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#size-nominal, #size-weight, #size-pie')) hideTip(); });
+  document.addEventListener('pointerdown', (e) => { if (!e.target.closest('#size-nominal, #size-weight, #size-pie, #public-tip')) hideTip(); });
   window.addEventListener('scroll', hideTip, { passive: true });
 
   function scrollToEnd(host) {
@@ -393,7 +407,7 @@
   function renderCurrentBook() {
     const host = document.querySelector('#current-book-table');
     if (!host) return;
-    host.innerHTML = `<table><thead><tr><th>Ticker</th><th>Shares</th><th>Weight</th></tr></thead><tbody>${D.positions.map((p) => `<tr><td>${p.ticker}</td><td>${fmtShares(p.shares)}</td><td>${fmtPctPlain(p.weight, 1)}</td></tr>`).join('')}</tbody></table>`;
+    host.innerHTML = `<table><thead><tr><th>Ticker</th><th>Weight</th></tr></thead><tbody>${D.positions.map((p) => `<tr><td>${p.ticker}</td><td>${fmtPctPlain(p.weight, 1)}</td></tr>`).join('')}</tbody></table>`;
   }
 
   function renderSize() {

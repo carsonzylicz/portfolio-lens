@@ -297,3 +297,11 @@ tbody tr:hover td { background: #faf8f2; }
   .all-main { grid-column:1 / -1; }
   .book-table table { min-width:0; }
 }
+.public-tip.is-mobile {
+  pointer-events: auto;
+  width: min(340px, calc(100vw - 24px));
+  max-height: 56vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(30,27,20,.18);
+}
