@@ -454,7 +454,7 @@
         <div class="era-legend"><span><i class="dot schwab"></i>Schwab ${fmtPctPlain(c.eraWeights.schwab, 1)}</span><span><i class="dot robinhood"></i>Robinhood ${fmtPctPlain(c.eraWeights.robinhood, 1)}</span></div>
       </div>
       <div class="table-wrap weighted-table"><table><thead><tr><th>Year</th><th>Weight</th><th>Portfolio</th><th>SPY</th><th>QQQ</th><th>vs SPY</th><th>vs QQQ</th></tr></thead><tbody>${c.byYear.map(row).join('')}<tr class="weighted-row"><td>Weighted avg</td><td>100%</td><td class="${w.portfolio < 0 ? 'neg' : 'pos'}">${fmtPct(w.portfolio)}</td><td class="${w.spy < 0 ? 'neg' : 'pos'}">${fmtPct(w.spy)}</td><td class="${w.qqq < 0 ? 'neg' : 'pos'}">${fmtPct(w.qqq)}</td><td class="${w.excess < 0 ? 'neg' : 'pos'}">${fmtPP(w.excess)}</td><td class="${w.excessQqq < 0 ? 'neg' : 'pos'}">${fmtPP(w.excessQqq)}</td></tr></tbody></table></div>
-      <div class="weighted-foot">Weights are average invested book value per year; later deposits carry more weight. * partial year. Absolute SPY/QQQ shown on desktop.</div>`;
+      <div class="weighted-foot">Weighted by average invested capital. * partial year.</div>`;
   }
 
   function renderPerformance() {

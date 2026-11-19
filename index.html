@@ -11,13 +11,12 @@
   <header class="top">
     <div class="wrap">
       <h1>Carson Zylicz Fund</h1>
-      <p class="sub">Positions, size, performance, trades.</p>
       <nav>
-        <a href="#size">Position size</a>
+        <a href="#size">Size</a>
         <a href="#performance">Returns</a>
         <a href="#replacement">Replacement</a>
         <a href="#positions">Positions</a>
-        <a href="#trades">Best trades</a>
+        <a href="#trades">Trades</a>
       </nav>
     </div>
   </header>
@@ -28,7 +27,7 @@
     <section class="panel" id="size">
       <div class="section-head">
         <h2>Position size</h2>
-        <p>Current book first, then nominal and share of book. Grey bands are sold.</p>
+        <p>Current book and size. Grey bands are sold.</p>
       </div>
       <div class="book-grid">
         <div class="book-panel">
@@ -41,12 +40,12 @@
         </div>
       </div>
       <div class="chart-block">
-        <div class="chart-head"><h3>Nominal — relative size</h3></div>
+        <div class="chart-head"><h3>Nominal</h3></div>
         <div class="legend" id="size-legend"></div>
         <div class="chart" id="size-nominal"></div>
       </div>
       <div class="chart-block">
-        <div class="chart-head"><h3>Share of book</h3><span class="hint">percent of the book</span></div>
+        <div class="chart-head"><h3>Weight</h3></div>
         <div class="chart" id="size-weight"></div>
       </div>
     </section>
@@ -54,8 +53,8 @@
 
     <section class="panel" id="performance">
       <div class="section-head">
-        <h2>Actual vs SPY and QQQ</h2>
-        <p>Schwab from Aug 2017; split-adjusted; dividends included. SPY/QQQ total returns (dividends included). Linked at Jan 2024. <span class="mobile-only">Swipe charts →</span></p>
+        <h2>Returns vs SPY and QQQ</h2>
+        <p>Schwab from Aug 2017; split-adjusted; dividends included. SPY/QQQ total returns. <span class="mobile-only">Swipe →</span></p>
       </div>
       <div class="weighted" id="all-weighted"></div>
       <div class="era" id="era-all">
@@ -63,7 +62,7 @@
         <div class="summary" id="all-summary"></div>
         <div class="legend" id="all-legend"></div>
         <div class="chart" id="all-chart"></div>
-        <p class="note">Linked at Jan 2024 when the account changed. The dashed vertical line marks the switch.</p>
+        <p class="note">Dashed line: account switch.</p>
       </div>
       <div class="era" id="era-robinhood">
         <div class="era-head"><h3>Robinhood era</h3><span id="rh-window"></span></div>
@@ -78,14 +77,14 @@
         <div class="chart" id="schwab-chart"></div>
         <div class="subperiod" id="schwab-periods"></div>
         <div class="year-table" id="schwab-years"></div>
-        <p class="note">Schwab from Aug 2017; split-adjusted; CELG→BMY 17 shares; 18 symbols last trade; dividends included.</p>
+        <p class="note">Split-adjusted; CELG→BMY 17 shares; 18 symbols last trade; dividends included.</p>
       </div>
     </section>
 
     <section class="panel" id="replacement">
       <div class="section-head">
-        <h2>Replacement — what you missed vs what you replaced it with</h2>
-        <p>Each point is a sale. Above the 45° line, the book did better.</p>
+        <h2>Replacement</h2>
+        <p>Each point is a sale; above 45° the book won.</p>
       </div>
       <div class="summary" id="rep-summary"></div>
       <div class="chart" id="rep-chart"></div>
@@ -94,8 +93,8 @@
 
     <section class="panel" id="positions">
       <div class="section-head">
-        <h2>Per position — actual history</h2>
-        <p>Actual position return; the line starts when the position was first held.</p>
+        <h2>Per position</h2>
+        <p>Actual return; line starts at first hold.</p>
       </div>
       <div class="scrub"><span class="scrub-label">Scrub</span><input type="range" id="pos-scrub" min="0" max="0" value="0"><span class="scrub-date" id="pos-date"></span></div>
       <div class="pos-grid" id="pos-grid"></div>
@@ -103,22 +102,22 @@
 
     <section class="panel" id="trades">
       <div class="section-head">
-        <h2>Best and worst realized performers</h2>
-        <p>Best and worst realized, by nominal and percent. One row per ticker; individual lists use unique tickers. <span class="mobile-only">Swipe tables →</span></p>
+        <h2>Realized trades</h2>
+        <p>Best and worst by nominal and percent; one row per ticker. <span class="mobile-only">Swipe →</span></p>
       </div>
       <div class="trade-grid">
-        <div class="trade-card"><h3>Best realized — by nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best realized — by percent</h3><div class="table-wrap"><table id="best-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst realized — by nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst realized — by percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best — nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best — percent</h3><div class="table-wrap"><table id="best-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst — nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst — percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
-      <p class="note">Nominal ranks internally; the bar is relative. Percent is realized gain ÷ cost.</p>
-      <div class="subhead"><h3>Individual trades</h3><p>The specific highest and lowest realized trades, not ticker totals.</p></div>
+      <p class="note">Nominal bars relative; percent = gain ÷ cost.</p>
+      <div class="subhead"><h3>Individual trades</h3></div>
       <div class="trade-grid">
-        <div class="trade-card"><h3>Best individual — by nominal</h3><div class="table-wrap"><table id="best-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best individual — by percent</h3><div class="table-wrap"><table id="best-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst individual — by nominal</h3><div class="table-wrap"><table id="worst-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst individual — by percent</h3><div class="table-wrap"><table id="worst-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best trade — nominal</h3><div class="table-wrap"><table id="best-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best trade — percent</h3><div class="table-wrap"><table id="best-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst trade — nominal</h3><div class="table-wrap"><table id="worst-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst trade — percent</h3><div class="table-wrap"><table id="worst-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
     </section>
   </main>
