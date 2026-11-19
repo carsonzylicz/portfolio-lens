@@ -62,7 +62,7 @@
     const area = `M${x(pts[0][0]).toFixed(1)},${y(0).toFixed(1)}L${pts.map(([d, v]) => `${x(d).toFixed(1)},${y(v).toFixed(1)}`).join('L')}L${x(pts.at(-1)[0]).toFixed(1)},${y(0).toFixed(1)}Z`;
     s.appendChild(el('path', { d: area, fill: 'rgba(47,111,237,.13)', 'clip-path': `url(#${id}-pos)` }));
     s.appendChild(el('path', { d: area, fill: 'rgba(178,59,59,.11)', 'clip-path': `url(#${id}-neg)` }));
-    s.appendChild(el('path', { d: line, fill: 'none', stroke: '#2f6fed', 'stroke-width': 1.4, 'stroke-linejoin': 'round' }));
+    s.appendChild(el('path', { d: line, fill: 'none', stroke: (p.currentPct ?? 0) >= 0 ? GREEN : RED, 'stroke-width': 1.4, 'stroke-linejoin': 'round' }));
     s.appendChild(el('line', { x1: pl, x2: W - pr, y1: y(0), y2: y(0), stroke: '#bdb8ab', 'stroke-dasharray': '3 4' }));
     s.appendChild(el('circle', { cx: x(p.highDate), cy: y(p.highPct), r: 2.4, fill: GREEN }));
     s.appendChild(el('circle', { cx: x(p.lowDate), cy: y(p.lowPct), r: 2.4, fill: RED }));
