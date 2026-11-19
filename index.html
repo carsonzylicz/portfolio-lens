@@ -37,12 +37,12 @@
     <section class="panel" id="size">
       <div class="section-head">
         <h2>Position size</h2>
-        <p>Shares held over time and each position’s share of the book. Shares and percentages only.</p>
+        <p>Same nominal and percent charts as the internal book. Nominal is normalized and has no value labels; sold names are the grey bands.</p>
       </div>
       <div class="chart-block">
-        <div class="chart-head"><h3>Shares held</h3><span class="hint">stacked share count</span></div>
+        <div class="chart-head"><h3>Nominal — relative size</h3><span class="hint">values hidden</span></div>
         <div class="legend" id="size-legend"></div>
-        <div class="chart" id="size-shares"></div>
+        <div class="chart" id="size-nominal"></div>
       </div>
       <div class="chart-block">
         <div class="chart-head"><h3>Share of book</h3><span class="hint">percent of the book</span></div>
@@ -53,14 +53,14 @@
     <section class="panel" id="performance">
       <div class="section-head">
         <h2>Actual vs SPY and QQQ</h2>
-        <p>Holdings-weighted actual returns. The all-history view links the two accounts at Jan 2024; the era cards below show each separately.</p>
+        <p>Holdings-weighted actual returns. The all-history view links the two accounts at Jan 2024. Before Nov 2021, Schwab symbols without a market price are marked at their last Schwab trade price; market prices cover from Nov 2021.</p>
       </div>
       <div class="era" id="era-all">
         <div class="era-head"><h3>All history — Schwab + Robinhood</h3><span id="all-window"></span></div>
         <div class="summary" id="all-summary"></div>
         <div class="legend" id="all-legend"></div>
         <div class="chart" id="all-chart"></div>
-        <p class="note">Linked at Jan 2024 when the account changed. The Schwab segment is the earlier account; the Robinhood segment is the current book.</p>
+        <p class="note">Linked at Jan 2024 when the account changed. The dashed vertical line marks the switch.</p>
       </div>
       <div class="era" id="era-robinhood">
         <div class="era-head"><h3>Robinhood era</h3><span id="rh-window"></span></div>
@@ -74,7 +74,7 @@
         <div class="summary" id="schwab-summary"></div>
         <div class="chart" id="schwab-chart"></div>
         <div class="year-table" id="schwab-years"></div>
-        <p class="note">Schwab era starts when the price archive covers the positions; earlier trades are in best trades.</p>
+        <p class="note">Starts Aug 2017. The 2017–2021 segment uses last Schwab trade prices where market prices are missing; market prices cover from Nov 2021.</p>
       </div>
     </section>
 
@@ -94,12 +94,19 @@
         <p>One row per ticker, built from every realized sale in the Schwab and Robinhood records. Nominal lists rank by total realized gain or loss (relative bars, no dollar amounts); percent lists rank by realized return. The worst lists show the largest losses.</p>
       </div>
       <div class="trade-grid">
-        <div class="trade-card"><h3>Best realized — by nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best realized — by percent</h3><div class="table-wrap"><table id="best-pct"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst realized — by nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst realized — by percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Sells</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best realized — by nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best realized — by percent</h3><div class="table-wrap"><table id="best-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst realized — by nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst realized — by percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
       <p class="note">Nominal is the total realized gain/loss per ticker, ranked internally; the bar is relative and no dollar amount is shown. Percent is total realized gain divided by total cost. All sells through Nov 18, 2026.</p>
+      <div class="subhead"><h3>Individual trades</h3><p>The specific highest and lowest realized trades, not ticker totals.</p></div>
+      <div class="trade-grid">
+        <div class="trade-card"><h3>Best individual — by nominal</h3><div class="table-wrap"><table id="best-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best individual — by percent</h3><div class="table-wrap"><table id="best-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst individual — by nominal</h3><div class="table-wrap"><table id="worst-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst individual — by percent</h3><div class="table-wrap"><table id="worst-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+      </div>
     </section>
   </main>
 

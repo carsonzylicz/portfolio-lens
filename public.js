@@ -65,7 +65,7 @@
     return s;
   }
 
-  function lineChart(data, label) {
+  function lineChart(data, label, cut) {
     const W = 760, H = 300, pl = 48, pr = 20, pt = 14, pb = 28;
     const n = data.dates.length;
     const series = [
@@ -93,6 +93,14 @@
       s.appendChild(el('text', { x: xx, y: H - 10, fill: '#8a8f98', 'font-size': 9, 'font-family': 'ui-monospace, monospace', 'text-anchor': 'middle' }, yy.yr));
     }
     s.appendChild(el('line', { x1: pl, x2: W - pr, y1: y(0), y2: y(0), stroke: '#bdb8ab', 'stroke-width': 0.9 }));
+    if (cut) {
+      const ci = data.dates.findIndex((d) => d >= cut);
+      if (ci > 0) {
+        const xx = x(ci);
+        s.appendChild(el('line', { x1: xx, x2: xx, y1: pt, y2: H - pb, stroke: '#8a8f98', 'stroke-width': 1.2, 'stroke-dasharray': '4 3' }));
+        s.appendChild(el('text', { x: xx + 5, y: pt + 10, fill: '#5c626b', 'font-size': 8.5, 'font-family': 'ui-monospace, monospace' }, 'Schwab | Robinhood'));
+      }
+    }
     for (const ser of series) {
       const pts = data[ser.key].map((v, i) => [x(i), y(v)]);
       s.appendChild(el('path', { d: linePath(pts), fill: 'none', stroke: ser.color, 'stroke-width': ser.key === 'portfolio' ? 1.8 : 1.2, 'stroke-dasharray': ser.dash || null, 'stroke-linejoin': 'round' }));
@@ -202,14 +210,19 @@
       const s = spark(p);
       if (s) chart.appendChild(s);
       card.appendChild(chart);
+      const ext = document.createElement('div');
+      ext.className = 'pos-ext';
+      ext.innerHTML = `<span class="pos">high ${fmtPct(p.highPct)} · ${fmtDate(p.highDate)}</span><span class="neg">low ${fmtPct(p.lowPct)} · ${fmtDate(p.lowDate)}</span>`;
+      card.appendChild(ext);
       host.appendChild(card);
     }
   }
 
   function renderSize() {
     const legend = document.querySelector('#size-legend');
-    legend.innerHTML = D.size.series.map((s) => `<span class="legend-item"><i class="swatch" style="background:${s.color}"></i>${s.ticker}</span>`).join('');
-    document.querySelector('#size-shares').appendChild(stackChart(D.size, 'shares', (v) => fmtShares(v), 'shares held by position'));
+    legend.innerHTML = D.size.series.filter((s) => !s.sold).map((s) => `<span class="legend-item"><i class="swatch" style="background:${s.color}"></i>${s.ticker}</span>`).join('')
+      + `<span class="legend-item"><i class="swatch" style="background:#c9c5ba"></i>sold</span>`;
+    document.querySelector('#size-nominal').appendChild(stackChart(D.size, 'rel', () => '', 'relative nominal position size, values hidden'));
     document.querySelector('#size-weight').appendChild(stackChart(D.size, 'weight', (v) => fmtPctPlain(v, 0), 'share of book by position'));
   }
 
@@ -224,7 +237,7 @@
       { label: 'Excess vs QQQ', value: fmtPP(all.summary.excessQqq), cls: all.summary.excessQqq < 0 ? 'neg' : 'pos' },
     ]);
     document.querySelector('#all-legend').innerHTML = `<span class="legend-item"><i class="swatch" style="background:${GREEN}"></i>Portfolio</span><span class="legend-item"><i class="swatch" style="background:${SPY}"></i>SPY (dashed)</span><span class="legend-item"><i class="swatch" style="background:${QQQ}"></i>QQQ (dashed)</span>`;
-    document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ'));
+    document.querySelector('#all-chart').appendChild(lineChart(all, 'all history portfolio versus SPY and QQQ', all.cut));
 
     const rh = D.perf;
     document.querySelector('#rh-window').textContent = `${fmtDate(rh.start)} → ${fmtDate(rh.end)}`;
@@ -270,7 +283,17 @@
       const bar = nominal
         ? `<td class="bar-cell"><div class="bar-track"><div class="bar-fill ${r.pct < 0 ? 'loss' : ''}" style="width:${Math.max(2, (r.size || 0) * 100)}%"></div></div></td>`
         : '';
-      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${r.sells}</td><td>${fmtDate(r.lastDate)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
+      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${fmtDate(r.lastDate)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
+    }).join('');
+  }
+
+  function tradeTable(id, rows, nominal) {
+    const tbody = document.querySelector(`${id} tbody`);
+    tbody.innerHTML = rows.map((r, i) => {
+      const bar = nominal
+        ? `<td class="bar-cell"><div class="bar-track"><div class="bar-fill ${r.pct < 0 ? 'loss' : ''}" style="width:${Math.max(2, (r.size || 0) * 100)}%"></div></div></td>`
+        : '';
+      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${fmtDate(r.date)}</td><td>${fmtShares(r.shares)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
     }).join('');
   }
 
@@ -279,6 +302,10 @@
     realizedTable('#best-pct', D.best.bestPct, false);
     realizedTable('#worst-nominal', D.best.worstNominal, true);
     realizedTable('#worst-pct', D.best.worstPct, false);
+    tradeTable('#best-nominal-trades', D.best.bestNominalTrades, true);
+    tradeTable('#best-pct-trades', D.best.bestPctTrades, false);
+    tradeTable('#worst-nominal-trades', D.best.worstNominalTrades, true);
+    tradeTable('#worst-pct-trades', D.best.worstPctTrades, false);
   }
 
   renderPositions();

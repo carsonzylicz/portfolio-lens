@@ -170,3 +170,6 @@ tbody tr:hover td { background: #faf8f2; }
   .bar-cell { width: 80px; }
 }
 .bar-fill.loss { background: var(--red); }
+.pos-ext { display:flex; justify-content:space-between; gap:8px; margin:2px 0 2px; font-family:var(--mono); font-size:8.5px; }
+.subhead { margin:18px 0 8px; }
+.subhead p { margin:2px 0 0; color:var(--faint); font-size:10.5px; }
