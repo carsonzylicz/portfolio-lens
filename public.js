@@ -525,10 +525,10 @@
     const card = (label, value) => `<div class="house-card"><span>${label}</span><strong class="${value < 0 ? 'neg' : 'pos'}">${fmtRecovery(value, 1)}</strong></div>`;
     summary.innerHTML = card('Overall', h.overall) + card('Current positions', h.current) + card('Closed names', h.closed);
     const row = (label, weight, value, cls = '') => {
-      const capped = Math.min(1, value);
       const free = value >= 1;
+      const over = Math.max(0, value - 1);
       const to100 = Math.max(0, 1 - value);
-      return `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${capped < 0 ? 'neg' : 'pos'}">${free ? '100%' : fmtRecovery(capped, 1)}${free ? ' <span class="house-free">free</span>' : ''}</td><td class="${to100 > 0 ? 'muted' : 'pos'}">${free ? '0.0pp' : fmtRemaining(to100)}</td></tr>`;
+      return `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${value < 0 ? 'neg' : 'pos'}">${fmtRecovery(value, 1)}${free ? ' <span class="house-free">free</span>' : ''}${over > 0 ? ` <span class="house-over">+${(over * 100).toFixed(1)}% over</span>` : ''}</td><td class="${to100 > 0 ? 'muted' : 'pos'}">${free ? '0.0pp' : fmtRemaining(to100)}</td></tr>`;
     };
     body.innerHTML = h.rows.map((r) => row(r.ticker, r.weight, r.house)).join('') + row('Closed names', null, h.closed, 'house-closed').replace('<td class="muted">82.0pp</td>', '<td>—</td>');
   }
