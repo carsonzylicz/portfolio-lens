@@ -192,3 +192,12 @@ tbody tr:hover td { background: #faf8f2; }
 }
 .public-tip strong { font-size: 11px; }
 .pos-chart { min-height: 104px; }
+.tip-head { font-weight:700; margin-bottom:4px; }
+.tip-sec { margin-top:5px; color:var(--faint); font-size:8px; text-transform:uppercase; letter-spacing:.06em; }
+.tip-row { display:flex; align-items:center; gap:5px; margin-top:1px; }
+.tip-row i { width:7px; height:7px; border-radius:2px; flex:0 0 auto; }
+.tip-row span { flex:1; }
+.tip-row b { font-weight:600; }
+.tip-row.hot { background:#f3efe3; }
+.tip-more { color:var(--faint); margin-top:3px; font-size:9px; }
+.subperiod { margin-top:10px; }

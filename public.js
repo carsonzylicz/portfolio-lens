@@ -60,7 +60,7 @@
     s.appendChild(defs);
     const line = pts.map(([d, v], i) => `${i ? 'L' : 'M'}${x(d).toFixed(1)},${y(v).toFixed(1)}`).join('');
     const area = `M${x(pts[0][0]).toFixed(1)},${y(0).toFixed(1)}L${pts.map(([d, v]) => `${x(d).toFixed(1)},${y(v).toFixed(1)}`).join('L')}L${x(pts.at(-1)[0]).toFixed(1)},${y(0).toFixed(1)}Z`;
-    s.appendChild(el('path', { d: area, fill: 'rgba(47,111,237,.13)', 'clip-path': `url(#${id}-pos)` }));
+    s.appendChild(el('path', { d: area, fill: 'rgba(19,121,91,.14)', 'clip-path': `url(#${id}-pos)` }));
     s.appendChild(el('path', { d: area, fill: 'rgba(178,59,59,.11)', 'clip-path': `url(#${id}-neg)` }));
     s.appendChild(el('path', { d: line, fill: 'none', stroke: (p.currentPct ?? 0) >= 0 ? GREEN : RED, 'stroke-width': 1.4, 'stroke-linejoin': 'round' }));
     s.appendChild(el('line', { x1: pl, x2: W - pr, y1: y(0), y2: y(0), stroke: '#bdb8ab', 'stroke-dasharray': '3 4' }));
@@ -238,8 +238,13 @@
         if (v >= acc && v <= acc + val) { hit = s; break; }
         acc += val;
       }
-      if (!hit) { hideTip(); return; }
-      showTip(`<strong>${hit.ticker}</strong><br>${fmtDate(d.dates[i])}<br>${fmtPctPlain(hit.weight[i], 1)} of book`, evt);
+      const items = d.series.map((s) => ({ ticker: s.ticker, color: s.color, sold: s.sold, weight: s.weight[i] || 0 })).filter((x) => x.weight > 0);
+      const cur = items.filter((x) => !x.sold).sort((a, b) => b.weight - a.weight);
+      const sold = items.filter((x) => x.sold).sort((a, b) => b.weight - a.weight);
+      const shown = sold.slice(0, 12);
+      const row = (x) => `<div class="tip-row ${x.ticker === hit?.ticker ? 'hot' : ''}"><i style="background:${x.color}"></i><span>${x.ticker}</span><b>${fmtPctPlain(x.weight, 1)}</b></div>`;
+      const more = sold.length > shown.length ? `<div class="tip-more">+${sold.length - shown.length} more sold · ${fmtPctPlain(sold.slice(shown.length).reduce((a, x) => a + x.weight, 0), 1)} of book</div>` : '';
+      showTip(`<div class="tip-head">${fmtDate(d.dates[i])} · ${items.length} names</div><div class="tip-sec">Current</div>${cur.map(row).join('')}<div class="tip-sec">Sold</div>${shown.map(row).join('')}${more}`, evt);
     };
     host.onpointerleave = (evt) => { if (evt.pointerType !== 'touch') hideTip(); };
     host.onpointerdown = (evt) => host.onpointermove(evt);
@@ -360,7 +365,22 @@
       { label: 'Excess vs QQQ', value: fmtPP(sh.summary.excessQqq), cls: sh.summary.excessQqq < 0 ? 'neg' : 'pos' },
     ]);
     document.querySelector('#schwab-chart').appendChild(lineChart(sh, 'Schwab era portfolio versus SPY and QQQ'));
+    renderSchwabPeriods(sh);
     yearTable(document.querySelector('#schwab-years'), sh.byYear);
+  }
+
+  function renderSchwabPeriods(sh) {
+    const host = document.querySelector('#schwab-periods');
+    if (!host) return;
+    const idx = (d) => sh.dates.findIndex((x) => x >= d);
+    const sub = (a, b) => {
+      const i = idx(a), j = idx(b);
+      const f = (arr) => (1 + arr[j]) / (1 + arr[i]) - 1;
+      return { p: f(sh.portfolio), s: f(sh.spy), q: f(sh.qqq) };
+    };
+    const one = sub('2017-08-11', '2021-12-31');
+    const two = sub('2021-12-31', sh.end);
+    host.innerHTML = `<table><thead><tr><th>Schwab period</th><th>Portfolio</th><th>SPY</th><th>QQQ</th></tr></thead><tbody><tr><td>2017–2021</td><td class="${one.p < 0 ? 'neg' : 'pos'}">${fmtPct(one.p)}</td><td class="${one.s < 0 ? 'neg' : 'pos'}">${fmtPct(one.s)}</td><td class="${one.q < 0 ? 'neg' : 'pos'}">${fmtPct(one.q)}</td></tr><tr><td>2022–2024</td><td class="${two.p < 0 ? 'neg' : 'pos'}">${fmtPct(two.p)}</td><td class="${two.s < 0 ? 'neg' : 'pos'}">${fmtPct(two.s)}</td><td class="${two.q < 0 ? 'neg' : 'pos'}">${fmtPct(two.q)}</td></tr></tbody></table>`;
   }
 
   function renderReplacement() {
