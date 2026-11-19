@@ -522,7 +522,7 @@
     if (!h || !summary || !body) return;
     const card = (label, value) => `<div class="house-card"><span>${label}</span><strong class="${value < 0 ? 'neg' : 'pos'}">${fmtPct(value, 1)}</strong></div>`;
     summary.innerHTML = card('Overall', h.overall) + card('Current positions', h.current) + card('Closed names', h.closed);
-    const row = (label, weight, value, cls = '') => `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${value < 0 ? 'neg' : 'pos'}">${fmtPct(value, 1)}</td></tr>`;
+    const row = (label, weight, value, cls = '') => { const capped = Math.min(1, value); const free = value >= 1; return `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${capped < 0 ? 'neg' : 'pos'}">${fmtPct(capped, 1)}${free ? ' <span class="house-free">free</span>' : ''}</td></tr>`; };
     body.innerHTML = h.rows.map((r) => row(r.ticker, r.weight, r.house)).join('') + row('Closed names', null, h.closed, 'house-closed');
   }
 

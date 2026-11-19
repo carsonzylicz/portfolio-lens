@@ -318,3 +318,5 @@ tbody tr:hover td { background: #faf8f2; }
 .house-card strong { display:block; font-family:var(--mono); font-size:22px; line-height:1.1; margin-top:2px; }
 .house-closed td { border-top:1px solid var(--line-2); color:var(--muted); }
 @media(max-width:760px){ .house-summary { grid-template-columns:1fr 1fr; } .house-summary .house-card:first-child { grid-column:1 / -1; } }
+
+.house-free { font-size:8px; letter-spacing:.06em; text-transform:uppercase; color:var(--green); border:1px solid currentColor; border-radius:4px; padding:1px 4px; margin-left:4px; }
