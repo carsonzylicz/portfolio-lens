@@ -9,6 +9,8 @@
 
   const fmtPct = (v, d = 1) => (v == null || !Number.isFinite(v) ? '—' : `${v < 0 ? '−' : '+'}${Math.abs(v * 100).toFixed(d)}%`);
   const fmtPctPlain = (v, d = 1) => (v == null || !Number.isFinite(v) ? '—' : `${(v * 100).toFixed(d)}%`);
+  const fmtRecovery = (v, d = 1) => (v == null || !Number.isFinite(v) ? '—' : `${v < 0 ? '−' : ''}${Math.abs(v * 100).toFixed(d)}%`);
+  const fmtRemaining = (v) => `${Math.max(0, v * 100).toFixed(1)}pp`;
   const fmtPP = (v) => (v == null || !Number.isFinite(v) ? '—' : `${v < 0 ? '−' : '+'}${Math.abs(v * 100).toFixed(1)}pp`);
   const fmtShares = (v) => {
     if (v == null || !Number.isFinite(v)) return '—';
@@ -520,10 +522,15 @@
     const summary = document.querySelector('#house-summary');
     const body = document.querySelector('#house-table tbody');
     if (!h || !summary || !body) return;
-    const card = (label, value) => `<div class="house-card"><span>${label}</span><strong class="${value < 0 ? 'neg' : 'pos'}">${fmtPct(value, 1)}</strong></div>`;
+    const card = (label, value) => `<div class="house-card"><span>${label}</span><strong class="${value < 0 ? 'neg' : 'pos'}">${fmtRecovery(value, 1)}</strong></div>`;
     summary.innerHTML = card('Overall', h.overall) + card('Current positions', h.current) + card('Closed names', h.closed);
-    const row = (label, weight, value, cls = '') => { const capped = Math.min(1, value); const free = value >= 1; return `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${capped < 0 ? 'neg' : 'pos'}">${fmtPct(capped, 1)}${free ? ' <span class="house-free">free</span>' : ''}</td></tr>`; };
-    body.innerHTML = h.rows.map((r) => row(r.ticker, r.weight, r.house)).join('') + row('Closed names', null, h.closed, 'house-closed');
+    const row = (label, weight, value, cls = '') => {
+      const capped = Math.min(1, value);
+      const free = value >= 1;
+      const to100 = Math.max(0, 1 - value);
+      return `<tr class="${cls}"><td>${label}</td><td>${weight == null ? '—' : fmtPctPlain(weight, 1)}</td><td class="${capped < 0 ? 'neg' : 'pos'}">${free ? '100%' : fmtRecovery(capped, 1)}${free ? ' <span class="house-free">free</span>' : ''}</td><td class="${to100 > 0 ? 'muted' : 'pos'}">${free ? '0.0pp' : fmtRemaining(to100)}</td></tr>`;
+    };
+    body.innerHTML = h.rows.map((r) => row(r.ticker, r.weight, r.house)).join('') + row('Closed names', null, h.closed, 'house-closed').replace('<td class="muted">82.0pp</td>', '<td>—</td>');
   }
 
   function renderReplacement() {
