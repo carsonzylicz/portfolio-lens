@@ -1,4 +1,4 @@
-# Portfolio Lens — public
+# Carson Zylicz Fund
 
 Live at **https://carsonzylicz.com/** on a Cloudflare Worker.
 

@@ -460,7 +460,7 @@
       const bar = nominal
         ? `<td class="bar-cell"><div class="bar-track"><div class="bar-fill ${r.pct < 0 ? 'loss' : ''}" style="width:${Math.max(2, (r.size || 0) * 100)}%"></div></div></td>`
         : '';
-      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${fmtDate(r.date)}</td><td>${fmtShares(r.shares)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
+      return `<tr><td>${i + 1}</td><td>${r.ticker}</td><td>${fmtDate(r.date)}</td><td class="${r.pct < 0 ? 'neg' : 'pos'}">${fmtPct(r.pct)}</td>${bar}</tr>`;
     }).join('');
   }
 
@@ -481,5 +481,5 @@
   renderReplacement();
   renderTrades();
   document.querySelector('#asof').textContent = `Updated ${fmtDate(D.asOf)} · positions, shares and percentages only`;
-  document.querySelector('#foot-source').textContent = `Sources: ${D.meta.sources}. No dollar amounts.`;
+  document.querySelector('#foot-source').textContent = `Sources: ${D.meta.sources}.`;
 })();

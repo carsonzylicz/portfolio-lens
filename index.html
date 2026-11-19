@@ -3,16 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portfolio Lens — public</title>
+  <title>Carson Zylicz Fund</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="public.css">
 </head>
 <body>
   <header class="top">
     <div class="wrap">
-      <div class="kicker">PUBLIC VIEW</div>
-      <h1>Portfolio Lens</h1>
-      <p class="sub">Positions, position size, performance and trades. <strong>No dollar amounts.</strong></p>
+      <h1>Carson Zylicz Fund</h1>
+      <p class="sub">Positions, size, performance, trades.</p>
       <nav>
         <a href="#positions">Positions</a>
         <a href="#size">Position size</a>
@@ -29,7 +28,7 @@
     <section class="panel" id="positions">
       <div class="section-head">
         <h2>Per position — actual history</h2>
-        <p>Each chart is the actual position return, percent only. The line starts when the position was first held.</p>
+        <p>Actual position return; the line starts when the position was first held.</p>
       </div>
       <div class="scrub"><span class="scrub-label">Scrub</span><input type="range" id="pos-scrub" min="0" max="0" value="0"><span class="scrub-date" id="pos-date"></span></div>
       <div class="pos-grid" id="pos-grid"></div>
@@ -38,7 +37,7 @@
     <section class="panel" id="size">
       <div class="section-head">
         <h2>Position size</h2>
-        <p>Same nominal and percent charts as the internal book. Nominal is normalized and has no value labels; sold names are the grey bands.</p>
+        <p>Nominal and share of book; grey bands are sold.</p>
       </div>
       <div class="chart-block">
         <div class="chart-head"><h3>Nominal — relative size</h3></div>
@@ -58,7 +57,7 @@
     <section class="panel" id="performance">
       <div class="section-head">
         <h2>Actual vs SPY and QQQ</h2>
-        <p>Holdings-weighted actual returns. Schwab starts Aug 2017 and includes cash dividends; SPY and QQQ are price returns. Share counts and prices are split-adjusted (AMZN 20:1, CSX 3:1, GOOGL 20:1). 2017–2021 uses monthly market closes; a few delisted names use their last trade price. The all-history view links the accounts at Jan 2024.</p>
+        <p>Schwab from Aug 2017; split-adjusted; dividends included. SPY/QQQ are price returns. Linked at Jan 2024.</p>
       </div>
       <div class="era" id="era-all">
         <div class="era-head"><h3>All history — Schwab + Robinhood</h3><span id="all-window"></span></div>
@@ -80,14 +79,14 @@
         <div class="chart" id="schwab-chart"></div>
         <div class="subperiod" id="schwab-periods"></div>
         <div class="year-table" id="schwab-years"></div>
-        <p class="note">Starts Aug 2017. Split-adjusted; 2017–2021 monthly closes. CELG→BMY completed at 17 shares (15 CSV + 2 residual). 18 symbols use last trade prices. Total return includes cash dividends and cash income; reinvested dividends are in the share count. External deposits/withdrawals are excluded.</p>
+        <p class="note">Schwab from Aug 2017; split-adjusted; CELG→BMY 17 shares; 18 symbols last trade; dividends included.</p>
       </div>
     </section>
 
     <section class="panel" id="replacement">
       <div class="section-head">
         <h2>Replacement — what you missed vs what you replaced it with</h2>
-        <p>Each point is a sale: the sold stock’s return after the sale (missed) against the book’s return since the sale (replaced). Percent only; points above the 45° line did better in the book.</p>
+        <p>Each point is a sale. Above the 45° line, the book did better.</p>
       </div>
       <div class="summary" id="rep-summary"></div>
       <div class="chart" id="rep-chart"></div>
@@ -97,7 +96,7 @@
     <section class="panel" id="trades">
       <div class="section-head">
         <h2>Best and worst realized performers</h2>
-        <p>One row per ticker, built from every realized sale in the Schwab and Robinhood records. Nominal lists rank by total realized gain or loss (relative bars, no dollar amounts); percent lists rank by realized return. The worst lists show the largest losses.</p>
+        <p>Best and worst realized, by nominal and percent. One row per ticker; individual lists use unique tickers.</p>
       </div>
       <div class="trade-grid">
         <div class="trade-card"><h3>Best realized — by nominal</h3><div class="table-wrap"><table id="best-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
@@ -105,13 +104,13 @@
         <div class="trade-card"><h3>Worst realized — by nominal</h3><div class="table-wrap"><table id="worst-nominal"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
         <div class="trade-card"><h3>Worst realized — by percent</h3><div class="table-wrap"><table id="worst-pct"><thead><tr><th>#</th><th>Ticker</th><th>Last sale</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
-      <p class="note">Nominal is the total realized gain/loss per ticker, ranked internally; the bar is relative and no dollar amount is shown. Percent is total realized gain divided by total cost. All sells through Nov 18, 2026.</p>
+      <p class="note">Nominal ranks internally; the bar is relative. Percent is realized gain ÷ cost.</p>
       <div class="subhead"><h3>Individual trades</h3><p>The specific highest and lowest realized trades, not ticker totals.</p></div>
       <div class="trade-grid">
-        <div class="trade-card"><h3>Best individual — by nominal</h3><div class="table-wrap"><table id="best-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Best individual — by percent</h3><div class="table-wrap"><table id="best-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst individual — by nominal</h3><div class="table-wrap"><table id="worst-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="trade-card"><h3>Worst individual — by percent</h3><div class="table-wrap"><table id="worst-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Shares</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best individual — by nominal</h3><div class="table-wrap"><table id="best-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative gain</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Best individual — by percent</h3><div class="table-wrap"><table id="best-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst individual — by nominal</h3><div class="table-wrap"><table id="worst-nominal-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th><th>Relative loss</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="trade-card"><h3>Worst individual — by percent</h3><div class="table-wrap"><table id="worst-pct-trades"><thead><tr><th>#</th><th>Ticker</th><th>Date</th><th>Return</th></tr></thead><tbody></tbody></table></div></div>
       </div>
     </section>
   </main>
@@ -119,7 +118,7 @@
   <div class="public-tip" id="public-tip" hidden></div>
 
   <footer class="wrap foot">
-    <p>Personal portfolio. Percentages, shares and relative size only; no dollar amounts, account numbers or names. Not investment advice.</p>
+    <p>Carson Zylicz Fund · Not investment advice.</p>
     <p id="foot-source"></p>
   </footer>
 
