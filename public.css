@@ -305,3 +305,10 @@ tbody tr:hover td { background: #faf8f2; }
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(30,27,20,.18);
 }
+.cagr-table-wrap { min-width:0; }
+.cagr-table { width:100%; border-collapse:collapse; font-size:10px; }
+.cagr-table th { font-family:var(--mono); font-size:8px; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); text-align:right; padding:3px 4px; border-bottom:1px solid var(--line-2); font-weight:500; }
+.cagr-table th:first-child, .cagr-table td:first-child { text-align:left; }
+.cagr-table td { font-family:var(--mono); font-size:11px; padding:4px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+.cagr-table tr:last-child td { border-bottom:0; }
+@media(max-width:760px){ .cagr-table th { font-size:7px; padding:3px 2px; } .cagr-table td { font-size:9px; padding:3px 2px; } }
